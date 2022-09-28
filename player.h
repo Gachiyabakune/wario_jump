@@ -47,9 +47,6 @@ private:
 	// 地面の高さ
 	float m_fieldY;
 
-	//ジャンプ関連
-	bool m_isJumpUp;	//上昇中
-	bool m_isJumpDown;	//下降中
-
+	
 	bool m_isDead;
 };
