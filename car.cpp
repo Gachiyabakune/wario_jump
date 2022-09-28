@@ -2,10 +2,21 @@
 #include "game.h"
 #include "car.h"
 
+namespace
+{
+	//待ち時間
+	constexpr int kwaitFrameMin = 60;
+	constexpr int kwaitFrameMax = 180;
+
+	//車の速度
+	constexpr float kSpeed = -24.0f;
+}
+
 Car::Car()
 {
 	m_handle = -1;
 	m_fieldY = 0.0f;
+	m_waitFrame = 0;
 }
 
 void Car::setGraphic(int handle)
@@ -20,16 +31,25 @@ void Car::setup(float fieldY)
 	m_pos.x = Game::kScreenWidth + 16.0f;
 	m_pos.y = m_fieldY - m_size.y;
 
-	m_vec.x = -16.0f;
+	m_vec.x = kSpeed;
 	m_vec.y = 0.0f;
+
+	//動き始めるまでの時間を設定 1秒から3秒待つ  60フレームから180フレーム
+	m_waitFrame = GetRand(kwaitFrameMax - kwaitFrameMin);
 }
 
 void Car::update()
 {
+	if (m_waitFrame > 0)
+	{
+		m_waitFrame--;
+		return;
+	}
 	m_pos += m_vec;
 }
 
 void Car::draw()
 {
 	DrawGraphF(m_pos.x, m_pos.y, m_handle, true);
+	DrawFormatString(0, 0, GetColor(255, 255, 255),"wait%d", m_waitFrame);
 }
