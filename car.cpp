@@ -18,6 +18,7 @@ Car::Car()
 	m_fieldY = 0.0f;
 	//m_moveType = kMoveTypeNormal;
 	m_waitFrame = 0;
+	m_stopFrame = 0;
 }
 
 void Car::setGraphic(int handle)
@@ -54,10 +55,10 @@ void Car::setup(float fieldY)
 		m_moveType = kMoveTypeReturn;
 	}
 	//強制的にジャンプ、デバック用
-	//m_moveType = kMoveTypeJump;
+	m_moveType = kMoveTypeNormal;
 
 	//動き始めるまでの時間を設定 1秒から3秒待つ  60フレームから180フレーム
-	m_waitFrame = GetRand(kwaitFrameMax - kwaitFrameMin) + kwaitFrameMin;
+	//m_waitFrame = GetRand(kwaitFrameMax - kwaitFrameMin) + kwaitFrameMin;
 }
 
 void Car::update()
@@ -100,12 +101,29 @@ void Car::draw()
 void Car::updateNormal()
 {
 	m_pos += m_vec;
+	//車が0を下回るとプラスに戻す
+	if (m_pos.x < -100)
+	{
+		m_pos.x = 3200; //5秒ループ
+	}
 }
 
 //一時停止フェイント
 void Car::updateStop()
 {
-	updateNormal(); //仮
+	if (m_pos.x > 300)
+	{
+		m_pos += m_vec;
+	}
+	else
+	{
+		m_stopFrame++;
+		if (m_stopFrame > 20)
+		{
+			m_pos += m_vec;
+		}
+		return;
+	}
 }
 
 //ジャンプする
@@ -118,7 +136,7 @@ void Car::updateJump()
 		isField = true;
 	}
 	m_pos += m_vec;
-	if (isField)
+	if (isField && m_pos.x < 450)
 	{
 		m_vec.y = -16.0;
 	}
@@ -128,5 +146,14 @@ void Car::updateJump()
 //途中で引き返す
 void Car::updateReturn()
 {
-	updateNormal(); //仮
+	
+	if (m_stopFrame != 18)
+	{
+		m_pos += m_vec;
+		m_stopFrame++;
+	}
+	else
+	{
+		m_pos -= m_vec;
+	}
 }

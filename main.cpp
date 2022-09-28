@@ -27,6 +27,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	int hPlayer = LoadGraph("data/player.png");
 	int hCar = LoadGraph("data/car.png");
+	int frame = 0;		//計測用の変数
+	int deadNum = 0;    //死亡回数
+	int hitFrame = 0;   //無敵フレーム
 
 	Player player;
 	player.setGraphic(hPlayer);
@@ -48,14 +51,34 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		player.update();
 		car.update();
 
+
+		//車に当たると
 		if (player.isCol(car))
 		//if(false)
 		{
-			player.setDead(true);
+			player.setDead(true);	//キャラが死亡する
+			if (hitFrame == 0)
+			{
+				deadNum++;			//死亡カウントが増える
+			}
+			hitFrame = 10;			//当たった直後無敵時間発生
 		}
-
+		if (hitFrame != 0)			//無敵時間の間
+		{
+			hitFrame--;				//無敵カウントを減らしていく
+		}
+		if (true)
+		{
+			frame++;				//死んでいるとき1ずつカウント
+		}
+		if (frame >= 60)			//カウントがたまるとキャラが復活
+		{
+			player.setDead(false);
+			frame = 0;
+		}
 		// 地面の描画
 		DrawLine(0, kFieldY, Game::kScreenWidth, kFieldY, GetColor(255, 255, 255));
+		DrawFormatString(0, 17, GetColor(255, 255, 255), "死亡回数%d回", deadNum);
 		player.draw();
 		car.draw();
 

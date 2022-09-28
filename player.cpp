@@ -40,7 +40,7 @@ void Player:: setup(float fieldY)
 
 void Player::update()
 {
-	if (m_isDead) return;
+	if(m_isDead) return;
 	m_pos += m_vec;
 	//’n–Ê‚Æ‚Ì“–‚½‚è
 	bool isField = false;
@@ -76,9 +76,9 @@ void Player::draw()
 bool Player::isCol(Car& car)
 {
 	float playerLeft = getPos().x;
-	float playerRight = getPos().x + getColSize().x;
+	float playerRight = getPos().x + kSizeX;
 	float playerTop = getPos().y;
-	float playerBottom = getPos().y + getColSize().y;
+	float playerBottom = getPos().y + kSizeY;
 
 	float carLeft = car.getPos().x;
 	float carRight = car.getPos().x + car.getSize().x;

@@ -53,6 +53,7 @@ private:
 
 	//移動開始までの待ち時間（フレーム数）
 	int m_waitFrame;
+	int m_stopFrame;
 
 	// 位置
 	Vec2 m_pos;
