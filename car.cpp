@@ -55,7 +55,7 @@ void Car::setup(float fieldY)
 		m_moveType = kMoveTypeReturn;
 	}
 	//強制的にジャンプ、デバック用
-	m_moveType = kMoveTypeNormal;
+	m_moveType = kMoveTypeJump;
 
 	//動き始めるまでの時間を設定 1秒から3秒待つ  60フレームから180フレーム
 	//m_waitFrame = GetRand(kwaitFrameMax - kwaitFrameMin) + kwaitFrameMin;
@@ -102,10 +102,6 @@ void Car::updateNormal()
 {
 	m_pos += m_vec;
 	//車が0を下回るとプラスに戻す
-	if (m_pos.x < -100)
-	{
-		m_pos.x = 3200; //5秒ループ
-	}
 }
 
 //一時停止フェイント
