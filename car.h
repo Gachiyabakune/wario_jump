@@ -55,6 +55,8 @@ private:
 	int m_waitFrame;
 	int m_stopFrame;
 
+	int carReturn;
+
 	// 位置
 	Vec2 m_pos;
 	// ベクトル
