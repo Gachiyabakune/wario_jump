@@ -1,14 +1,8 @@
 #include "DxLib.h"
 
 #include "game.h"
-#include "player.h"
-#include "car.h"
-
-namespace
-{
-	// 地面の高さ
-	constexpr int kFieldY = Game::kScreenHeight - 64;
-}
+#include "SceneMain.h"
+#include "SceneTitle.h"
 
 // プログラムは WinMain から始まります
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -25,63 +19,52 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return -1;			// エラーが起きたら直ちに終了
 	}
 
-	int hPlayer = LoadGraph("data/player.png");
-	int hCar = LoadGraph("data/car.png");
-	int frame = 0;		//計測用の変数
-	int deadNum = 0;    //死亡回数
-	int hitFrame = 0;   //無敵フレーム
-
-	Player player;
-	player.setGraphic(hPlayer);
-	player.setup(kFieldY);
-
-	Car car;
-	car.setGraphic(hCar);
-	car.setup(kFieldY);
-
 	// ダブルバッファモード
 	SetDrawScreen(DX_SCREEN_BACK);
 
+	//現在のシーン番号  0:Title   1:Main   2:Test
+	int sceneNo = 0;
+
+	SceneMain scene;
+	SceneTitle sceneTitle;
+
+	switch (sceneNo)
+	{
+	case 0:
+		sceneTitle.init();
+		break;
+	case 1:
+		scene.init();
+		break;
+	}
+	
 	while (ProcessMessage() == 0)
 	{
 		LONGLONG  time = GetNowHiPerformanceCount();
 		// 画面のクリア
 		ClearDrawScreen();
 
-		player.update();
-		car.update();
-
-
-		//車に当たると
-		if (player.isCol(car))
-		//if(false)
+		//シーン変更フラグ
+		bool isChange = false;
+		switch (sceneNo)
 		{
-			player.setDead(true);	//キャラが死亡する
-			if (hitFrame == 0)
+		case 0:
+			isChange = sceneTitle.update();
+			sceneTitle.draw();
+			if (isChange)
 			{
-				deadNum++;			//死亡カウントが増える
-			}
-			hitFrame = 10;			//当たった直後無敵時間発生
-		}
-		if (hitFrame != 0)			//無敵時間の間
-		{
-			hitFrame--;				//無敵カウントを減らしていく
-		}
-		if (true)
-		{
-			frame++;				//死んでいるとき1ずつカウント
-		}
-		if (frame >= 60)			//カウントがたまるとキャラが復活
-		{
-			player.setDead(false);
-			frame = 0;
-		}
-		// 地面の描画
-		DrawLine(0, kFieldY, Game::kScreenWidth, kFieldY, GetColor(255, 255, 255));
-		DrawFormatString(0, 17, GetColor(255, 255, 255), "死亡回数%d回", deadNum);
-		player.draw();
-		car.draw();
+				sceneTitle.end();
 
+				scene.init();
+				sceneNo = 1;
+			}
+			break;
+		case 1:
+			scene.update();
+			scene.draw();
+			break;
+		}
+	
 		//裏画面を表画面を入れ替える
 		ScreenFlip();
 
@@ -94,9 +77,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		}
 	}
 
-	DeleteGraph(hPlayer);
-	DeleteGraph(hCar);
-
+	switch (sceneNo)
+	{
+	case 0:
+		sceneTitle.end();
+		break;
+	case 1:
+		scene.end();
+		break;
+	}
+	
 	DxLib_End();				// ＤＸライブラリ使用の終了処理
 
 	return 0;				// ソフトの終了 

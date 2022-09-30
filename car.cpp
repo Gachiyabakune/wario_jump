@@ -9,7 +9,9 @@ namespace
 	constexpr int kwaitFrameMax = 180;
 
 	//車の速度
-	constexpr float kSpeed = -24.0f;
+	constexpr float kSpeed = -12.0f;
+
+	//constexpr int k
 }
 
 Car::Car()
@@ -56,7 +58,7 @@ void Car::setup(float fieldY)
 		m_moveType = kMoveTypeReturn;
 	}
 	//強制的にジャンプ、デバック用
-	m_moveType = kMoveTypeStop;
+	m_moveType = kMoveTypeJump;
 
 	//動き始めるまでの時間を設定 1秒から3秒待つ  60フレームから180フレーム
 	//m_waitFrame = GetRand(kwaitFrameMax - kwaitFrameMin) + kwaitFrameMin;
@@ -101,11 +103,10 @@ void Car::draw()
 	}
 	//DrawFormatString(0, 0, GetColor(255, 255, 255),"wait%d", m_waitFrame);
 	
-
 }
 
 
-//private
+//------private-----
 
 //まっすぐ進む
 void Car::updateNormal()
@@ -141,18 +142,19 @@ void Car::updateJump()
 		isField = true;
 	}
 	m_pos += m_vec;
-	if (isField && m_pos.x < 450)
+	if (isField && m_pos.x < 300.0f)
 	{
-		m_vec.y = -16.0;
+		m_vec.y = -20.0f;
+		
 	}
-	m_vec.y += 0.8;
+	m_vec.y += 0.8f;
 }
 
 //途中で引き返す
 void Car::updateReturn()
 {
 	//18フレーム進む
-	if (m_stopFrame != 18)
+	if (m_stopFrame != 35)
 	{
 		m_pos += m_vec;
 		m_stopFrame++;
